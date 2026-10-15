@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Чек-лист подключения</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root {
+    --bg: #0b0d12;
+    --surface: rgba(255,255,255,0.04);
+    --surface-2: rgba(255,255,255,0.07);
+    --text: #f2f4f8;
+    --hint: #8b93a7;
+    --accent: #2ee6c8;
+    --accent-2: #5b8cff;
+    --accent-text: #041512;
+    --line: rgba(255,255,255,0.08);
+    --danger: #ff6b7a;
+    --glow: 0 0 40px rgba(46,230,200,0.15);
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "SF Pro Display", "Segoe UI", Roboto, Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+
+  body {
+    padding: env(safe-area-inset-top, 0) 16px env(safe-area-inset-bottom, 20px);
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* Background glow */
+  body::before {
+    content: "";
+    position: fixed;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(46,230,200,0.18) 0%, rgba(91,140,255,0.08) 40%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== HERO / 3D TERMINAL ===== */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 22px 0 8px;
+  }
+
+  .stage {
+    width: 100px;
+    height: 100px;
+    perspective: 600px;
+    margin-bottom: 12px;
+  }
+
+  .term {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: spin 12s linear infinite;
+  }
+
+  .face {
+    position: absolute;
+    width: 62px;
+    height: 80px;
+    left: 19px;
+    top: 10px;
+    border-radius: 10px;
+    background: linear-gradient(145deg, #1a1f2b, #0d1018);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+
+  .face.front { transform: translateZ(16px); }
+  .face.back  { transform: translateZ(-16px) rotateY(180deg); }
+  .face.right {
+    width: 32px;
+    left: 34px;
+    transform: rotateY(90deg) translateZ(16px);
+    background: linear-gradient(145deg, #12151e, #0a0c12);
+  }
+  .face.left {
+    width: 32px;
+    left: 3px;
+    transform: rotateY(-90deg) translateZ(16px);
+    background: linear-gradient(145deg, #12151e, #0a0c12);
+  }
+
+  .screen {
+    position: absolute;
+    left: 9px;
+    top: 12px;
+    width: 44px;
+    height: 26px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    opacity: 0.9;
+    box-shadow: 0 0 12px rgba(46,230,200,0.5);
+    transform: translateZ(17px);
+  }
+
+  .keys {
+    position: absolute;
+    left: 9px;
+    top: 46px;
+    width: 44px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    transform: translateZ(17px);
+  }
+
+  .keys span {
+    height: 6px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 2px;
+  }
+
+  @keyframes spin {
+    from { transform: rotateY(0deg); }
+    to   { transform: rotateY(360deg); }
+  }
+
+  h1 {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+
+  .sub {
+    color: var(--hint);
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+
+  /* ===== TABS ===== */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    background: var(--surface);
+    padding: 5px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+  }
+
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--hint);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tab.active {
+    background: linear-gradient(135deg, var(--accent), #1ec9b0);
+    color: var(--accent-text);
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(46,230,200,0.25);
+  }
+
+  .tab:active { transform: scale(0.97); }
+
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.25s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== PILLS ===== */
+  .pillrow {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .pill {
+    flex: 1;
+    padding: 12px 8px;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .pill.selected {
+    border-color: var(--accent);
+    background: rgba(46,230,200,0.1);
+    box-shadow: 0 0 0 1px var(--accent), var(--glow);
+  }
+
+  .pill:active { transform: scale(0.97); }
+
+  /* ===== FORM ===== */
+  label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--hint);
+    margin: 14px 2px 6px;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 13px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(46,230,200,0.15);
+  }
+
+  input::placeholder { color: #5c6478; }
+
+  /* ===== KASSA CARDS ===== */
+  .section-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--hint);
+    margin: 20px 2px 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .kassa-row {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-top: 10px;
+    position: relative;
+    backdrop-filter: blur(12px);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .kassa-row:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  }
+
+  .kassa-row .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .kassa-row .full { grid-column: 1 / -1; }
+
+  .kassa-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .rm {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(255,107,122,0.12);
+    color: var(--danger);
+    font-size: 18px;
+    line-height: 1;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    font-size: 15.5px;
+    font-weight: 700;
+    margin-top: 16px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .btn:active { transform: scale(0.98); }
+
+  .btn.primary {
+    background: linear-gradient(135deg, var(--accent), #1ec9b0);
+    color: var(--accent-text);
+    box-shadow: 0 6px 20px rgba(46,230,200,0.3);
+  }
+
+  .btn.ghost {
+    background: transparent;
+    color: var(--accent);
+    border: 1.5px dashed rgba(46,230,200,0.35);
+    font-weight: 600;
+  }
+
+  .err {
+    color: var(--danger);
+    font-size: 13px;
+    margin-top: 10px;
+    display: none;
+    padding: 10px 12px;
+    background: rgba(255,107,122,0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(255,107,122,0.2);
+  }
+
+  /* ===== HISTORY CARDS ===== */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    backdrop-filter: blur(12px);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transform-style: preserve-3d;
+  }
+
+  .card .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+
+  .card .partner {
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .card .date {
+    color: var(--hint);
+    font-size: 12px;
+  }
+
+  .card .row {
+    color: var(--hint);
+    font-size: 13px;
+    margin-top: 3px;
+  }
+
+  .empty {
+    color: var(--hint);
+    font-size: 14px;
+    text-align: center;
+    padding: 36px 0;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="hero">
+    <div class="stage">
+      <div class="term">
+        <div class="face back"></div>
+        <div class="face left"></div>
+        <div class="face right"></div>
+        <div class="face front">
+          <div class="screen"></div>
+          <div class="keys">
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h1>Чек-лист подключения</h1>
+    <div class="sub">создайте документ или добавьте мерчанта</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="form">Форма</div>
+    <div class="tab" data-tab="history">История</div>
+  </div>
+
+  <div class="panel active" id="panel-form">
+    <div class="pillrow">
+      <div class="pill selected" data-mode="checklist">📋 Чек-лист</div>
+      <div class="pill" data-mode="merchant">📊 Мерчант</div>
+    </div>
+
+    <div id="mode-checklist">
+      <label>Название партнера</label>
+      <input id="c-partner" placeholder="например, Амид">
+      <label>Адрес</label>
+      <input id="c-address" placeholder="например, Исфара">
+      <label>Номер подключения</label>
+      <input id="c-conn" placeholder="например, 920008105">
+
+      <div class="section-title">Кассы</div>
+      <div id="kassa-list"></div>
+      <button class="btn ghost" id="add-kassa" type="button">+ Добавить кассу</button>
+
+      <div class="err" id="c-err"></div>
+      <button class="btn primary" id="c-submit" type="button">Создать чек-лист</button>
+    </div>
+
+    <div id="mode-merchant" style="display:none;">
+      <label>Название мерчанта</label>
+      <input id="m-partner" placeholder="например, Амид">
+      <label>Номер</label>
+      <input id="m-conn" placeholder="например, 920008105">
+      <div class="err" id="m-err"></div>
+      <button class="btn primary" id="m-submit" type="button">Добавить мерчанта</button>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-history">
+    <div class="section-title">Последние чек-листы</div>
+    <div id="history-list"></div>
+    <div class="section-title">Мерчанты</div>
+    <div id="merchants-list"></div>
+  </div>
+
+</div>
+
+<script>
+const tg = window.Telegram ? window.Telegram.WebApp : null;
+if (tg) {
+  tg.ready();
+  tg.expand();
+  try { tg.setHeaderColor('#0b0d12'); } catch(e) {}
+  try { tg.setBackgroundColor('#0b0d12'); } catch(e) {}
+}
+
+// --- данные, переданные ботом через #data=... ---
+let DATA = { history: [], merchants: [] };
+try {
+  const hash = location.hash.replace(/^#/, '');
+  const params = new URLSearchParams(hash);
+  const raw = params.get('data');
+  if (raw) DATA = JSON.parse(decodeURIComponent(escape(atob(raw))));
+} catch (e) { /* нет данных */ }
+
+// --- вкладки ---
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById('panel-' + t.dataset.tab).classList.add('active');
+});
+
+// --- переключение формы ---
+document.querySelectorAll('.pill').forEach(p => p.onclick = () => {
+  document.querySelectorAll('.pill').forEach(x => x.classList.remove('selected'));
+  p.classList.add('selected');
+  const checklist = p.dataset.mode === 'checklist';
+  document.getElementById('mode-checklist').style.display = checklist ? '' : 'none';
+  document.getElementById('mode-merchant').style.display = checklist ? 'none' : '';
+});
+
+// --- кассы ---
+let kassaId = 0;
+function addKassaRow() {
+  kassaId++;
+  const id = kassaId;
+  const div = document.createElement('div');
+  div.className = 'kassa-row';
+  div.dataset.id = id;
+  div.innerHTML = `
+    <div class="kassa-label">Касса #${id}</div>
+    <button class="rm" type="button" onclick="this.closest('.kassa-row').remove()">×</button>
+    <div class="grid">
+      <input placeholder="PAN (16 цифр)" maxlength="16" inputmode="numeric" class="k-pan">
+      <input placeholder="Серийник или -" maxlength="8" class="k-serial">
+      <input placeholder="Тип (само, кафе…)" class="k-type full">
+      <input placeholder="Название (необязательно)" class="k-name full">
+    </div>`;
+  document.getElementById('kassa-list').appendChild(div);
+}
+document.getElementById('add-kassa').onclick = addKassaRow;
+addKassaRow();
+
+// --- отправка в бота ---
+function sendToBot(payload) {
+  if (tg && tg.sendData) {
+    tg.sendData(JSON.stringify(payload));
+  } else {
+    alert('Откройте это приложение через кнопку в Telegram-боте.');
+  }
+}
+
+document.getElementById('c-submit').onclick = () => {
+  const partner = document.getElementById('c-partner').value.trim();
+  const address = document.getElementById('c-address').value.trim();
+  const conn = document.getElementById('c-conn').value.trim();
+  const errBox = document.getElementById('c-err');
+  errBox.style.display = 'none';
+
+  const rows = [...document.querySelectorAll('.kassa-row')];
+  const kassy = [];
+  for (const row of rows) {
+    const pan = row.querySelector('.k-pan').value.replace(/\s/g, '');
+    let serial = row.querySelector('.k-serial').value.trim();
+    const type = row.querySelector('.k-type').value.trim();
+    const name = row.querySelector('.k-name').value.trim();
+    if (!pan) continue;
+    if (!/^\d{16}$/.test(pan)) {
+      errBox.textContent = `PAN «${pan}» должен состоять из 16 цифр`;
+      errBox.style.display = 'block';
+      return;
+    }
+    if (serial === '-' || serial === '') serial = '';
+    if (serial && !/^\d{8}$/.test(serial)) {
+      errBox.textContent = `Серийник «${serial}» должен состоять из 8 цифр`;
+      errBox.style.display = 'block';
+      return;
+    }
+    kassy.push({ pan, serial: serial || null, type: type || null, name: name || null });
+  }
+
+  if (!partner || !conn) {
+    errBox.textContent = 'Укажите партнёра и номер подключения';
+    errBox.style.display = 'block';
+    return;
+  }
+  if (!kassy.length) {
+    errBox.textContent = 'Добавьте хотя бы одну кассу';
+    errBox.style.display = 'block';
+    return;
+  }
+
+  sendToBot({ action: 'checklist', partner, address, conn_number: conn, kassy });
+};
+
+document.getElementById('m-submit').onclick = () => {
+  const partner = document.getElementById('m-partner').value.trim();
+  const conn = document.getElementById('m-conn').value.trim();
+  const errBox = document.getElementById('m-err');
+  errBox.style.display = 'none';
+  if (!partner || !conn) {
+    errBox.textContent = 'Укажите название и номер';
+    errBox.style.display = 'block';
+    return;
+  }
+  sendToBot({ action: 'add_merchant', partner, conn_number: conn });
+};
+
+// --- история ---
+function tilt(card) {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const rx = ((e.clientY - r.top) / r.height - 0.5) * -8;
+    const ry = ((e.clientX - r.left) / r.width - 0.5) * 8;
+    card.style.transform = `perspective(500px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.02)`;
+    card.style.boxShadow = '0 12px 32px rgba(0,0,0,0.35)';
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+    card.style.boxShadow = '';
+  });
+}
+
+const histBox = document.getElementById('history-list');
+if (!DATA.history || !DATA.history.length) {
+  histBox.innerHTML = '<div class="empty">Пока нет сформированных чек-листов</div>';
+} else {
+  DATA.history.forEach(h => {
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = `
+      <div class="top">
+        <span class="partner">${h.partner}</span>
+        <span class="date">${h.created_at || ''}</span>
+      </div>
+      <div class="row">${h.address || ''} · номер ${h.conn_number}</div>
+      <div class="row">касс: ${h.kassa_count} · настроил: ${h.created_by || ''}</div>`;
+    histBox.appendChild(c);
+    tilt(c);
+  });
+}
+
+const merchBox = document.getElementById('merchants-list');
+if (!DATA.merchants || !DATA.merchants.length) {
+  merchBox.innerHTML = '<div class="empty">Список пуст</div>';
+} else {
+  DATA.merchants.forEach(m => {
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = `
+      <div class="top"><span class="partner">№${m.num ?? ''} ${m.name}</span></div>
+      <div class="row">${m.number ?? ''}</div>`;
+    merchBox.appendChild(c);
+    tilt(c);
+  });
+}
+</script>
+</body>
+</html>
