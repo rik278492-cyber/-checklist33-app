@@ -489,8 +489,14 @@ let DATA = { history: [], merchants: [] };
 try {
   const hash = location.hash.replace(/^#/, '');
   const params = new URLSearchParams(hash);
-  const raw = params.get('data');
-  if (raw) DATA = JSON.parse(decodeURIComponent(escape(atob(raw))));
+  let raw = params.get('data');
+  if (raw) {
+    // исправляем url-safe base64 → обычный base64
+    raw = raw.replace(/-/g, '+').replace(/_/g, '/');
+    // добавляем недостающие = в конце, если нужно
+    while (raw.length % 4) raw += '=';
+    DATA = JSON.parse(decodeURIComponent(escape(atob(raw))));
+  }
 } catch (e) { /* нет данных */ }
 
 // --- вкладки ---
