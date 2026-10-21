@@ -20,9 +20,9 @@
     --glow: 0 0 40px rgba(46,230,200,0.15);
     --radius: 16px;
   }
- 
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
   html, body {
     height: 100%;
     background: var(--bg);
@@ -31,14 +31,14 @@
     -webkit-tap-highlight-color: transparent;
     overflow-x: hidden;
   }
- 
+
   body {
     padding: env(safe-area-inset-top, 0) 16px env(safe-area-inset-bottom, 20px);
     max-width: 480px;
     margin: 0 auto;
     position: relative;
   }
- 
+
   /* Background glow */
   body::before {
     content: "";
@@ -52,12 +52,12 @@
     pointer-events: none;
     z-index: 0;
   }
- 
+
   .app {
     position: relative;
     z-index: 1;
   }
- 
+
   /* ===== HERO / 3D TERMINAL ===== */
   .hero {
     display: flex;
@@ -65,14 +65,14 @@
     align-items: center;
     padding: 22px 0 8px;
   }
- 
+
   .stage {
     width: 100px;
     height: 100px;
     perspective: 600px;
     margin-bottom: 12px;
   }
- 
+
   .term {
     width: 100%;
     height: 100%;
@@ -80,7 +80,7 @@
     transform-style: preserve-3d;
     animation: spin 12s linear infinite;
   }
- 
+
   .face {
     position: absolute;
     width: 62px;
@@ -92,7 +92,7 @@
     border: 1px solid rgba(255,255,255,0.1);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
   }
- 
+
   .face.front { transform: translateZ(16px); }
   .face.back  { transform: translateZ(-16px) rotateY(180deg); }
   .face.right {
@@ -107,7 +107,7 @@
     transform: rotateY(-90deg) translateZ(16px);
     background: linear-gradient(145deg, #12151e, #0a0c12);
   }
- 
+
   .screen {
     position: absolute;
     left: 9px;
@@ -120,7 +120,7 @@
     box-shadow: 0 0 12px rgba(46,230,200,0.5);
     transform: translateZ(17px);
   }
- 
+
   .keys {
     position: absolute;
     left: 9px;
@@ -131,18 +131,18 @@
     gap: 4px;
     transform: translateZ(17px);
   }
- 
+
   .keys span {
     height: 6px;
     background: rgba(255,255,255,0.18);
     border-radius: 2px;
   }
- 
+
   @keyframes spin {
     from { transform: rotateY(0deg); }
     to   { transform: rotateY(360deg); }
   }
- 
+
   h1 {
     font-size: 19px;
     font-weight: 700;
@@ -150,14 +150,14 @@
     margin-bottom: 4px;
     text-align: center;
   }
- 
+
   .sub {
     color: var(--hint);
     font-size: 13px;
     text-align: center;
     margin-bottom: 18px;
   }
- 
+
   /* ===== TABS ===== */
   .tabs {
     display: flex;
@@ -168,7 +168,7 @@
     border-radius: 14px;
     border: 1px solid var(--line);
   }
- 
+
   .tab {
     flex: 1;
     text-align: center;
@@ -180,31 +180,31 @@
     cursor: pointer;
     transition: all 0.2s ease;
   }
- 
+
   .tab.active {
     background: linear-gradient(135deg, var(--accent), #1ec9b0);
     color: var(--accent-text);
     font-weight: 700;
     box-shadow: 0 4px 16px rgba(46,230,200,0.25);
   }
- 
+
   .tab:active { transform: scale(0.97); }
- 
+
   .panel { display: none; }
   .panel.active { display: block; animation: fadeIn 0.25s ease; }
- 
+
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(6px); }
     to   { opacity: 1; transform: translateY(0); }
   }
- 
+
   /* ===== PILLS ===== */
   .pillrow {
     display: flex;
     gap: 10px;
     margin-bottom: 16px;
   }
- 
+
   .pill {
     flex: 1;
     padding: 12px 8px;
@@ -218,15 +218,15 @@
     cursor: pointer;
     transition: all 0.2s ease;
   }
- 
+
   .pill.selected {
     border-color: var(--accent);
     background: rgba(46,230,200,0.1);
     box-shadow: 0 0 0 1px var(--accent), var(--glow);
   }
- 
+
   .pill:active { transform: scale(0.97); }
- 
+
   /* ===== FORM ===== */
   label {
     display: block;
@@ -235,7 +235,14 @@
     color: var(--hint);
     margin: 14px 2px 6px;
   }
- 
+
+  input[type="checkbox"] {
+    width: 18px !important;
+    height: 18px;
+    padding: 0 !important;
+    flex: none;
+    accent-color: var(--accent);
+  }
   input, select {
     width: 100%;
     padding: 13px 14px;
@@ -247,14 +254,14 @@
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
- 
+
   input:focus, select:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(46,230,200,0.15);
   }
- 
+
   input::placeholder { color: #5c6478; }
- 
+
   /* ===== KASSA CARDS ===== */
   .section-title {
     font-size: 12.5px;
@@ -264,7 +271,7 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
- 
+
   .kassa-row {
     background: var(--surface);
     border: 1px solid var(--line);
@@ -275,26 +282,26 @@
     backdrop-filter: blur(12px);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
- 
+
   .kassa-row:hover {
     box-shadow: 0 8px 24px rgba(0,0,0,0.25);
   }
- 
+
   .kassa-row .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
- 
+
   .kassa-row .full { grid-column: 1 / -1; }
- 
+
   .kassa-label {
     font-size: 12px;
     font-weight: 600;
     color: var(--accent);
     margin-bottom: 8px;
   }
- 
+
   .rm {
     position: absolute;
     right: 10px;
@@ -312,7 +319,7 @@
     align-items: center;
     justify-content: center;
   }
- 
+
   /* ===== BUTTONS ===== */
   .btn {
     width: 100%;
@@ -325,22 +332,22 @@
     cursor: pointer;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
- 
+
   .btn:active { transform: scale(0.98); }
- 
+
   .btn.primary {
     background: linear-gradient(135deg, var(--accent), #1ec9b0);
     color: var(--accent-text);
     box-shadow: 0 6px 20px rgba(46,230,200,0.3);
   }
- 
+
   .btn.ghost {
     background: transparent;
     color: var(--accent);
     border: 1.5px dashed rgba(46,230,200,0.35);
     font-weight: 600;
   }
- 
+
   .err {
     color: var(--danger);
     font-size: 13px;
@@ -351,7 +358,7 @@
     border-radius: 10px;
     border: 1px solid rgba(255,107,122,0.2);
   }
- 
+
   /* ===== HISTORY CARDS ===== */
   .card {
     background: var(--surface);
@@ -363,30 +370,30 @@
     transition: transform 0.15s ease, box-shadow 0.15s ease;
     transform-style: preserve-3d;
   }
- 
+
   .card .top {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     margin-bottom: 6px;
   }
- 
+
   .card .partner {
     font-weight: 700;
     font-size: 15px;
   }
- 
+
   .card .date {
     color: var(--hint);
     font-size: 12px;
   }
- 
+
   .card .row {
     color: var(--hint);
     font-size: 13px;
     margin-top: 3px;
   }
- 
+
   .empty {
     color: var(--hint);
     font-size: 14px;
@@ -397,7 +404,7 @@
 </head>
 <body>
 <div class="app">
- 
+
   <div class="hero">
     <div class="stage">
       <div class="term">
@@ -416,18 +423,18 @@
     <h1>Чек-лист подключения</h1>
     <div class="sub">создайте документ или добавьте мерчанта</div>
   </div>
- 
+
   <div class="tabs">
     <div class="tab active" data-tab="form">Форма</div>
     <div class="tab" data-tab="history">История</div>
   </div>
- 
+
   <div class="panel active" id="panel-form">
     <div class="pillrow">
       <div class="pill selected" data-mode="checklist">📋 Чек-лист</div>
       <div class="pill" data-mode="merchant">📊 Мерчант</div>
     </div>
- 
+
     <div id="mode-checklist">
       <label>Название партнера</label>
       <input id="c-partner" placeholder="например, Амид">
@@ -435,15 +442,15 @@
       <input id="c-address" placeholder="например, Исфара">
       <label>Номер подключения</label>
       <input id="c-conn" placeholder="например, 920008105">
- 
+
       <div class="section-title">Кассы</div>
       <div id="kassa-list"></div>
       <button class="btn ghost" id="add-kassa" type="button">+ Добавить кассу</button>
- 
+
       <div class="err" id="c-err"></div>
       <button class="btn primary" id="c-submit" type="button">Создать чек-лист</button>
     </div>
- 
+
     <div id="mode-merchant" style="display:none;">
       <label>Название мерчанта</label>
       <input id="m-partner" placeholder="например, Амид">
@@ -453,22 +460,22 @@
       <button class="btn primary" id="m-submit" type="button">Добавить мерчанта</button>
     </div>
   </div>
- 
+
   <div class="panel" id="panel-history">
     <div class="section-title">Последние чек-листы</div>
     <div id="history-list"></div>
     <div class="section-title">Мерчанты</div>
     <div id="merchants-list"></div>
   </div>
- 
+
 </div>
- 
+
 <script>
 window.onerror = function(msg, url, line, col, err) {
   alert('Ошибка в приложении: ' + msg + ' (строка ' + line + ')');
   return false;
 };
- 
+
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 if (tg) {
   tg.ready();
@@ -476,7 +483,7 @@ if (tg) {
   try { tg.setHeaderColor('#0b0d12'); } catch(e) {}
   try { tg.setBackgroundColor('#0b0d12'); } catch(e) {}
 }
- 
+
 // --- данные, переданные ботом через #data=... ---
 let DATA = { history: [], merchants: [] };
 try {
@@ -485,7 +492,7 @@ try {
   const raw = params.get('data');
   if (raw) DATA = JSON.parse(decodeURIComponent(escape(atob(raw))));
 } catch (e) { /* нет данных */ }
- 
+
 // --- вкладки ---
 document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
   document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
@@ -493,7 +500,7 @@ document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
   t.classList.add('active');
   document.getElementById('panel-' + t.dataset.tab).classList.add('active');
 });
- 
+
 // --- переключение формы ---
 document.querySelectorAll('.pill').forEach(p => p.onclick = () => {
   document.querySelectorAll('.pill').forEach(x => x.classList.remove('selected'));
@@ -502,7 +509,7 @@ document.querySelectorAll('.pill').forEach(p => p.onclick = () => {
   document.getElementById('mode-checklist').style.display = checklist ? '' : 'none';
   document.getElementById('mode-merchant').style.display = checklist ? 'none' : '';
 });
- 
+
 // --- кассы ---
 let kassaId = 0;
 function addKassaRow() {
@@ -524,7 +531,7 @@ function addKassaRow() {
 }
 document.getElementById('add-kassa').onclick = addKassaRow;
 addKassaRow();
- 
+
 // --- отправка в бота ---
 function sendToBot(payload) {
   try {
@@ -537,7 +544,7 @@ function sendToBot(payload) {
     alert('Ошибка при отправке в бота: ' + e.message);
   }
 }
- 
+
 document.getElementById('c-submit').onclick = () => {
   try {
     const partner = document.getElementById('c-partner').value.trim();
@@ -545,7 +552,7 @@ document.getElementById('c-submit').onclick = () => {
     const conn = document.getElementById('c-conn').value.trim();
     const errBox = document.getElementById('c-err');
     errBox.style.display = 'none';
- 
+
     const rows = [...document.querySelectorAll('.kassa-row')];
     const kassy = [];
     for (const row of rows) {
@@ -576,7 +583,7 @@ document.getElementById('c-submit').onclick = () => {
       }
       kassy.push({ pan, serial: serial || null, type: type || null, name: name || null });
     }
- 
+
     if (!partner || !conn) {
       errBox.textContent = 'Укажите партнёра и номер подключения';
       errBox.style.display = 'block';
@@ -589,13 +596,13 @@ document.getElementById('c-submit').onclick = () => {
       errBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
- 
+
     sendToBot({ action: 'checklist', partner, address, conn_number: conn, kassy });
   } catch (e) {
     alert('Не получилось отправить: ' + e.message);
   }
 };
- 
+
 document.getElementById('m-submit').onclick = () => {
   try {
     const partner = document.getElementById('m-partner').value.trim();
@@ -613,7 +620,7 @@ document.getElementById('m-submit').onclick = () => {
     alert('Не получилось отправить: ' + e.message);
   }
 };
- 
+
 // --- история ---
 function tilt(card) {
   card.addEventListener('mousemove', e => {
@@ -628,26 +635,90 @@ function tilt(card) {
     card.style.boxShadow = '';
   });
 }
- 
+
+const CHECK_ITEMS = DATA.check_items || [];
 const histBox = document.getElementById('history-list');
+
+function renderChecklistCard(h) {
+  const c = document.createElement('div');
+  c.className = 'card';
+
+  const markedCount = CHECK_ITEMS.reduce((n, _, i) => n + (h.checks && h.checks[String(i)] ? 1 : 0), 0);
+
+  const head = document.createElement('div');
+  head.innerHTML = `
+    <div class="top">
+      <span class="partner">${h.partner}</span>
+      <span class="date">${h.created_at || ''}</span>
+    </div>
+    <div class="row">${h.address || ''} · номер ${h.conn_number}</div>
+    <div class="row">касс: ${h.kassa_count} · отмечено: ${markedCount}/${CHECK_ITEMS.length}</div>`;
+  head.style.cursor = 'pointer';
+  c.appendChild(head);
+
+  const detail = document.createElement('div');
+  detail.style.display = 'none';
+  detail.style.marginTop = '10px';
+  detail.style.borderTop = '1px solid var(--line)';
+  detail.style.paddingTop = '10px';
+
+  const checksWrap = document.createElement('div');
+  CHECK_ITEMS.forEach((item, i) => {
+    const row = document.createElement('label');
+    row.style.display = 'flex';
+    row.style.alignItems = 'center';
+    row.style.gap = '8px';
+    row.style.padding = '5px 0';
+    row.style.fontSize = '13.5px';
+    const checked = !!(h.checks && h.checks[String(i)]);
+    row.innerHTML = `<input type="checkbox" data-idx="${i}" ${checked ? 'checked' : ''} style="width:18px;height:18px;"> <span>${item}</span>`;
+    checksWrap.appendChild(row);
+  });
+  detail.appendChild(checksWrap);
+
+  const commentLabel = document.createElement('label');
+  commentLabel.textContent = 'Комментарий';
+  detail.appendChild(commentLabel);
+  const commentInput = document.createElement('input');
+  commentInput.value = h.comment || '';
+  commentInput.placeholder = 'необязательно';
+  detail.appendChild(commentInput);
+
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'btn primary';
+  saveBtn.type = 'button';
+  saveBtn.textContent = 'Сохранить';
+  saveBtn.onclick = () => {
+    try {
+      const checks = {};
+      checksWrap.querySelectorAll('input[type=checkbox]').forEach(cb => {
+        checks[cb.dataset.idx] = cb.checked;
+      });
+      sendToBot({ action: 'update_checklist', id: h.id, checks, comment: commentInput.value.trim() });
+    } catch (e) {
+      alert('Не получилось сохранить: ' + e.message);
+    }
+  };
+  detail.appendChild(saveBtn);
+
+  c.appendChild(detail);
+  head.addEventListener('click', () => {
+    detail.style.display = detail.style.display === 'none' ? 'block' : 'none';
+  });
+
+  return c;
+}
+
 if (!DATA.history || !DATA.history.length) {
   histBox.innerHTML = '<div class="empty">Пока нет сформированных чек-листов</div>';
 } else {
   DATA.history.forEach(h => {
-    const c = document.createElement('div');
-    c.className = 'card';
-    c.innerHTML = `
-      <div class="top">
-        <span class="partner">${h.partner}</span>
-        <span class="date">${h.created_at || ''}</span>
-      </div>
-      <div class="row">${h.address || ''} · номер ${h.conn_number}</div>
-      <div class="row">касс: ${h.kassa_count} · настроил: ${h.created_by || ''}</div>`;
+    const c = renderChecklistCard(h);
     histBox.appendChild(c);
     tilt(c);
   });
 }
- 
+
 const merchBox = document.getElementById('merchants-list');
 if (!DATA.merchants || !DATA.merchants.length) {
   merchBox.innerHTML = '<div class="empty">Список пуст</div>';
@@ -661,3 +732,7 @@ if (!DATA.merchants || !DATA.merchants.length) {
     merchBox.appendChild(c);
     tilt(c);
   });
+}
+</script>
+</body>
+</html>
